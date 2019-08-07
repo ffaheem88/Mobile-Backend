@@ -7,12 +7,9 @@ package PKClass;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author ffahe
  */
-public class GetGroupList extends HttpServlet {
+public class SetGroupACPower extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,59 +32,27 @@ public class GetGroupList extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
         response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
         response.addHeader("Access-Control-Max-Age", "1728000");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            AirDB conn = new AirDB();
-
-            
-            String userId = request.getParameter("userid");
-//            String node_id = airdb.getNodeType(AC_LABEL);
-//            
-//             if (node_id.startsWith("A")) {
-                 ArrayList<String[]> idlist = conn.GetGroupList(userId);
-                 
-                  JsonArray aclist = new JsonArray();
-            for(int x = 0;x<idlist.size();x++){
-                 JsonObject ac = new JsonObject();
-                 String[] list = idlist.get(x);
-                 ac.addProperty("ID", list[0]);
-                 
-                 String getPowerOn = conn.getPowerStateACGroup(list[0]);
-                 boolean allON = false;
-                  int total = 0;
-                 int poweron =0;
-                 try{
-                 total = Integer.parseInt(list[2]);
-                 poweron = Integer.parseInt(getPowerOn);
-                 }catch(Exception e){
-                     total = 0;
-                     poweron =0;
-                 }
-                 if(total - poweron == 0){
-                     allON = true;
-                 }
-                
-                 ac.addProperty("ALLON", allON);
-                 ac.addProperty("LABEL", list[1]);
-                 ac.addProperty("DEV", list[2]);
-                 ac.addProperty("OFFLINEDEV", list[3]);
-
+             String groupid = request.getParameter("ID");
+             String state = request.getParameter("state");
+             
+              AirDBMobile conn = new AirDBMobile();
               
-           
+              conn.setStateGroupAC(groupid,state);
+              JsonObject ac = new JsonObject();
+             
               
-                aclist.add(ac);
-            }
-            Gson gsonBuilder = new GsonBuilder().create();
-            String acliststr = gsonBuilder.toJson(aclist);
+               
+               
+               Gson gsonBuilder = new GsonBuilder().create();
+            String acliststr = gsonBuilder.toJson(ac);
            out.println(acliststr);
-                 
-                 
-                 
         }
     }
 

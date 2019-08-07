@@ -156,6 +156,26 @@
         <servlet-name>AssignDevice</servlet-name>
         <servlet-class>PKClass.AssignDevice</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MotionHist</servlet-name>
+        <servlet-class>PKClass.MotionHist</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetDashboard</servlet-name>
+        <servlet-class>PKClass.GetDashboard</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LocalControl</servlet-name>
+        <servlet-class>PKClass.LocalControl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SetGroupACPower</servlet-name>
+        <servlet-class>PKClass.SetGroupACPower</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SetSubGroupACPower</servlet-name>
+        <servlet-class>PKClass.SetSubGroupACPower</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GetMoves</servlet-name>
         <url-pattern>/GetMoves</url-pattern>
@@ -311,6 +331,26 @@
     <servlet-mapping>
         <servlet-name>AssignDevice</servlet-name>
         <url-pattern>/AssignDevice</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MotionHist</servlet-name>
+        <url-pattern>/MotionHist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetDashboard</servlet-name>
+        <url-pattern>/GetDashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LocalControl</servlet-name>
+        <url-pattern>/LocalControl</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SetGroupACPower</servlet-name>
+        <url-pattern>/SetGroupACPower</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SetSubGroupACPower</servlet-name>
+        <url-pattern>/SetSubGroupACPower</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

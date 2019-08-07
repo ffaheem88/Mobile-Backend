@@ -20,7 +20,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
  * @author Faisal
  */
 public class AirDB {
-    static String dbadress = "jdbc:mysql://pkujala-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
+    static String dbadress = "jdbc:mysql://pkujala2-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
     //static String dbadress = "jdbc:mysql://127.0.0.1:3306/ffaheem_wiir";
      private String user;
      private String pass;
@@ -1473,6 +1473,30 @@ public void SetHistoryGrp(String TrackerID, String Thermostat, String Speed, Str
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
             statement.executeUpdate("INSERT INTO `GRP_DATA` (`ID`, `GRP_ID`, `TIME`, `TEMP`, `HUMID`, `THERMOSTAT`, `FAN_SPEED`, `POWER` , `MODE`, `SWING`) VALUES (NULL, '"+TrackerID+"', '"+time+"', '"+Temp+"', '"+humid+"', '"+Thermostat+"', '"+Speed+"', '"+Power+"', '"+Mode+"', '"+Swing+"');");  
+            
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}      
+      
+}
+
+
+public void SetHistoryMotion(String TrackerID, String Move, String Time){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("INSERT INTO `MOTION_HIST` (`ID`, `MOTION_ID`, `TIME`, `VAL`) VALUES (NULL, '"+TrackerID+"', '"+Time+"', '"+Move+"');");  
             
             
             statement.close();
@@ -4583,7 +4607,64 @@ public String[] GetTimeGraphMinute(String TrackerID,String limit){
             data=e.toString();  
 }
         return data;
-} 
+}
+  
+  public String getPowerStateACGroup(String group_id){
+  
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                     .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE SUBGROUP_ID IN (SELECT SUBGROUP_ID FROM SUBGRP_DET WHERE GROUP_ID="+ group_id+") AND POWER='ON'" );   
+            while (resultSet.next()) {
+                data = (resultSet.getString("COUNT(*)"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
+  
+  
+  public String getPowerStateACSubGroup(String subgroup_id){
+  
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                     .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE SUBGROUP_ID IN ("+subgroup_id+") AND POWER='ON'" );   
+            while (resultSet.next()) {
+                data = (resultSet.getString("COUNT(*)"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
   
   public String[] getSchdIDList(String acid){
      ArrayList al = new ArrayList(); 
@@ -4659,12 +4740,13 @@ public String[] GetTimeGraphMinute(String TrackerID,String limit){
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT * FROM ffaheem_wiir.GRP_DET LEFT JOIN (SELECT SUBGRP_DET.GROUP_ID,COUNT(*) AS DEV FROM SUBGRP_DET GROUP BY SUBGRP_DET.GROUP_ID) AS SUBGRP ON GRP_DET.GROUP_ID=SUBGRP.GROUP_ID WHERE PROFILE_ID='"+userid+"'");  
+                    .executeQuery("SELECT * FROM ffaheem_wiir.GRP_DET LEFT JOIN (SELECT SUBGRP_DET.GROUP_ID,SUBGRP_DET.SUBGROUP_ID,COUNT(ACM.ID) AS DEV FROM SUBGRP_DET LEFT JOIN (SELECT * FROM AC_MAIN) AS ACM ON SUBGRP_DET.SUBGROUP_ID=ACM.SUBGROUP_ID GROUP BY SUBGRP_DET.GROUP_ID) AS SUBGRP ON GRP_DET.GROUP_ID=SUBGRP.GROUP_ID LEFT JOIN (SELECT SUBGRP_DET.GROUP_ID,SUBGRP_DET.SUBGROUP_ID,COUNT(ACM.ID) AS OFFLINEDEV FROM SUBGRP_DET LEFT JOIN (SELECT * FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')<  date_add(NOW(), INTERVAL '4:58' hour_minute)) AS ACM ON SUBGRP_DET.SUBGROUP_ID=ACM.SUBGROUP_ID GROUP BY SUBGRP_DET.GROUP_ID) AS SUBGRPOFF ON GRP_DET.GROUP_ID=SUBGRPOFF.GROUP_ID WHERE GRP_DET.PROFILE_ID='"+userid+"' GROUP BY GRP_DET.GROUP_ID");  
             while (resultSet.next()) { 
-                String[] list = new String[3];
+                String[] list = new String[4];
                 list[0] = resultSet.getString("GROUP_ID");
                 list[1] = resultSet.getString("GROUP_NAME");
                 list[2] = resultSet.getString("DEV");
+                list[3] = resultSet.getString("OFFLINEDEV");
                 al.add(list);
                 
             }  
@@ -4693,12 +4775,13 @@ public String[] GetTimeGraphMinute(String TrackerID,String limit){
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT * FROM ffaheem_wiir.SUBGRP_DET LEFT JOIN (SELECT AC_MAIN.SUBGROUP_ID,COUNT(*) AS DEV FROM AC_MAIN GROUP BY AC_MAIN.SUBGROUP_ID) AS ACMAIN ON SUBGRP_DET.SUBGROUP_ID=ACMAIN.SUBGROUP_ID WHERE GROUP_ID='"+groupid+"'");  
+                    .executeQuery("SELECT * FROM ffaheem_wiir.SUBGRP_DET LEFT JOIN (SELECT AC_MAIN.SUBGROUP_ID,COUNT(*) AS DEV FROM AC_MAIN GROUP BY AC_MAIN.SUBGROUP_ID) AS ACMAIN ON SUBGRP_DET.SUBGROUP_ID=ACMAIN.SUBGROUP_ID LEFT JOIN (SELECT AC_MAIN.SUBGROUP_ID,COUNT(*) AS OFFLINEDEV FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')<  date_add(NOW(), INTERVAL '4:58' hour_minute) GROUP BY AC_MAIN.SUBGROUP_ID) AS ACMAINOFF ON SUBGRP_DET.SUBGROUP_ID=ACMAINOFF.SUBGROUP_ID WHERE GROUP_ID='"+groupid+"'");  
             while (resultSet.next()) { 
-                String[] list = new String[3];
+                String[] list = new String[4];
                 list[0] = resultSet.getString("SUBGROUP_ID");
                 list[1] = resultSet.getString("SUBGROUP_NAME");
                 list[2] = resultSet.getString("DEV");
+                list[3] = resultSet.getString("OFFLINEDEV");
                 al.add(list);
                 
             }  
@@ -5582,13 +5665,7 @@ public void setnewScheduleDetail(String power,String day,String lastid,String ho
             connection.close();
             
             
-            connection = DriverManager.getConnection(dbadress, user, pass);
-            statement = connection.createStatement();  
-            statement.executeUpdate("DELETE FROM SUBGRP_DET where GROUP_ID='"+sid+"'"); 
             
-             
-            statement.close();
-            connection.close();
             
              
             

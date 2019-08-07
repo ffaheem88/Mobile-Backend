@@ -18,7 +18,7 @@ public class AirDBMobile {
 //    static String user="ffaheem_mobile";
 //    static String pass="mobile@123";
     
-    static String dbadress = "jdbc:mysql://pkujala.c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
+    static String dbadress = "jdbc:mysql://pkujala2-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
     static String user="ffaheem";
     static String pass="fai12345";
     
@@ -51,6 +51,48 @@ public class AirDBMobile {
 }
         return data;
 }
+    
+    public void setTempNow(String AC_ID, String temp) throws SQLException{
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("UPDATE AC_MAIN SET `TEMP`='"+temp+"' WHERE ID='"+AC_ID+"'");  
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            connection.close();
+            e.printStackTrace();  
+}
+ }
+    
+    public void setUpdateTime(String AC_ID, String time) throws SQLException{
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("UPDATE AC_MAIN SET `LAST_UPDATE`='"+time+"' WHERE ID='"+AC_ID+"'");  
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) { 
+            connection.close();
+            e.printStackTrace();  
+}
+ }
     
     
      public ArrayList GetGroupList(String userid){
@@ -193,7 +235,119 @@ public class AirDBMobile {
        
         return al;
 
-     }     
+     }
+      
+      public ArrayList GetTotalAcList(String userid){
+     ArrayList<String[]> al = new ArrayList(); 
+     
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID='"+userid+"' AND POWER='OFF'");  
+            while (resultSet.next()) { 
+                String[] list = new String[5];
+                list[0] = resultSet.getString("ID");
+                list[1] = resultSet.getString("LABEL");
+                list[2] = resultSet.getString("POWER");
+                list[3] = resultSet.getString("LAST_UPDATE");
+                list[4] = resultSet.getString("TEMP");
+                al.add(list);
+                
+            }  
+            
+                
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}
+       
+        return al;
+
+     }
+      
+      public ArrayList GetTotalOfflineAcList(String userid){
+     ArrayList<String[]> al = new ArrayList(); 
+     
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT * FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')< date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid);  
+            while (resultSet.next()) { 
+                String[] list = new String[5];
+                list[0] = resultSet.getString("ID");
+                list[1] = resultSet.getString("LABEL");
+                list[2] = resultSet.getString("POWER");
+                list[3] = resultSet.getString("LAST_UPDATE");
+                list[4] = resultSet.getString("TEMP");
+                al.add(list);
+                
+            }  
+            
+                
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}
+       
+        return al;
+
+     }
+      
+      
+       public ArrayList GetTotalOperationalAcList(String userid){
+     ArrayList<String[]> al = new ArrayList(); 
+     
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID="+userid+" AND POWER='ON'");  
+            while (resultSet.next()) { 
+                String[] list = new String[5];
+                list[0] = resultSet.getString("ID");
+                list[1] = resultSet.getString("LABEL");
+                list[2] = resultSet.getString("POWER");
+                list[3] = resultSet.getString("LAST_UPDATE");
+                list[4] = resultSet.getString("TEMP");
+                al.add(list);
+                
+            }  
+            
+                
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}
+       
+        return al;
+
+     }
 
      public String[] GetState(String TrackerID){
     
@@ -237,6 +391,121 @@ public class AirDBMobile {
 }
      
      
+     
+      public String getTotalAC(String userid){
+    
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE PROFILE_ID='"+userid+"'");  
+            while (resultSet.next()) {
+                data = (resultSet.getString("COUNT(*)"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
+     
+      
+       public String getTotalOfflineAC(String userid){
+    
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')< date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid);  
+            while (resultSet.next()) {
+                data = (resultSet.getString("COUNT(*)"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
+       
+       
+       public String getTotalOperational(String userid){
+    
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid+" AND POWER='ON'");  
+            while (resultSet.next()) {
+                data = (resultSet.getString("COUNT(*)"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
+       
+       
+       public String getTotalAvgTemp(String userid){
+    
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT ROUND(AVG(TEMP)) AS AVGTEMP FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid);  
+            while (resultSet.next()) {
+                data = (resultSet.getString("AVGTEMP"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
       
       public String getACBrand(String TrackerID){
     
@@ -1698,6 +1967,50 @@ public void SetHistoryGrp(String TrackerID, String Thermostat, String Speed, Str
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
             statement.executeUpdate("UPDATE AC_MAIN SET THERMOSTAT='"+Thermo+"' WHERE ID='"+AC_ID+"'");  
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}     
+    
+}
+ 
+ public void setStateGroupAC(String GROUP_ID, String STATE){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("UPDATE AC_MAIN SET POWER='"+STATE+"' WHERE SUBGROUP_ID IN(SELECT SUBGROUP_ID FROM SUBGRP_DET WHERE GROUP_ID='"+GROUP_ID+"')");  
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}     
+    
+}
+ 
+ 
+ 
+ public void setStateSubGroupAC(String SUBGROUP_ID, String STATE){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("UPDATE AC_MAIN SET POWER='"+STATE+"' WHERE SUBGROUP_ID = "+SUBGROUP_ID);  
             statement.close();
             connection.close();
             

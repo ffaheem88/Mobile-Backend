@@ -52,13 +52,34 @@ public class GetSubGroupList extends HttpServlet {
                  ArrayList<String[]> idlist = conn.GetSubGroupList(userId);
                  
                   JsonArray aclist = new JsonArray();
+                  
             for(int x = 0;x<idlist.size();x++){
                  JsonObject ac = new JsonObject();
                  String[] list = idlist.get(x);
+                 
+                 
+                 
                  ac.addProperty("ID", list[0]);
+                 
+                 
+                  String getPowerOn = conn.getPowerStateACSubGroup(list[0]);
+                 boolean allON = false;
+                 int total = 0;
+                 int poweron =0;
+                 try{
+                 total = Integer.parseInt(list[2]);
+                 poweron = Integer.parseInt(getPowerOn);
+                 }catch(Exception e){
+                     total = 0;
+                     poweron =0;
+                 }
+                 if(total - poweron == 0){
+                     allON = true;
+                 }
+                 ac.addProperty("ALLON", allON);
                  ac.addProperty("LABEL", list[1]);
                  ac.addProperty("DEV", list[2]);
-                 
+                 ac.addProperty("OFFLINEDEV", list[3]);
               
            
               
