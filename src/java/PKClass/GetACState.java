@@ -47,7 +47,8 @@ public class GetACState extends HttpServlet {
             
             AirDBMobile conn = new AirDBMobile();
            String[] state = conn.GetState(tracker_id);
-           
+          String[] current=conn.getCurrent(tracker_id);
+                String currval = current[0];
            
            
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -71,6 +72,8 @@ public class GetACState extends HttpServlet {
                  ac.addProperty("Humid", state[8]);
                  ac.addProperty("Signal", state[9]);
                  ac.addProperty("Remote", state[10]);
+                 
+                 
                  String lasttime = state[11];
            String status = "OFFLINE";
                  try {
@@ -91,7 +94,7 @@ public class GetACState extends HttpServlet {
                              }
                ac.addProperty("Status", status);
                ac.addProperty("Brand", state[12]);
-               
+               ac.addProperty("Current", currval);
                Gson gsonBuilder = new GsonBuilder().create();
             String acliststr = gsonBuilder.toJson(ac);
            out.println(acliststr);

@@ -69,6 +69,35 @@ public class AirDB {
 }
         return data;
 }
+      
+      
+       public String[] getCurrent(String AC_ID) {
+
+        String[] data = new String[2];
+
+        Connection connection = null;
+        try {
+
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();
+
+            ResultSet resultSet = statement
+                    .executeQuery("SELECT * FROM COMPRESSOR WHERE AC_ID='" + AC_ID + "' ORDER BY ID DESC LIMIT 1");
+            while (resultSet.next()) {
+                data[0] = (resultSet.getString("COMPRESSOR"));
+                data[1] =  (resultSet.getString("TIME"));
+            }
+
+            statement.close();
+            connection.close();
+
+        } catch (Exception e) {
+            data[0] = e.toString();
+        }
+        return data;
+    }
     public ArrayList CurrentHist(String userid){
      ArrayList<String[]> al = new ArrayList(); 
      
