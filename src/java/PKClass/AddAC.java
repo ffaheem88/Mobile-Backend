@@ -4,27 +4,29 @@
  */
 package PKClass;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.util.ArrayList;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Faisal
  */
-public class GetSubGroupDevList extends HttpServlet {
+public class AddAC extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -38,70 +40,73 @@ public class GetSubGroupDevList extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Access-Control-Allow-Origin", "*");
+       response.setContentType("text/html;charset=UTF-8");
+         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
         response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
         response.addHeader("Access-Control-Max-Age", "1728000");
         PrintWriter out = response.getWriter();
         try {
-           
-            String subgrpId = request.getParameter("ID");
-            
-            AirDBMobile conn = new AirDBMobile();
-           ArrayList<String[]> idlist = conn.GetSubGroupDevList(subgrpId);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-           Calendar now = Calendar.getInstance(); // in your case now will be the server time after getting from DB
-           now.add(Calendar.HOUR, +5);  
-           String time = sdf.format(now.getTime());
-          
-      		Date d1 = null;
-                Date d2 = null;
-            Date d3 = null;
-            JsonArray aclist = new JsonArray();
-            for(int x = 0;x<idlist.size();x++){
-                 JsonObject ac = new JsonObject();
-                 String[] list = idlist.get(x);
-                 ac.addProperty("ID", list[0]);
-                 ac.addProperty("Label", list[1]);
-                 ac.addProperty("Power", list[2]);
-                 
-              
-                String lasttime = list[3];
-                String installtime = list[5];
-                 try {
-                                 d1 = sdf.parse(lasttime);
-                                 d2 = sdf.parse(time);
-                                 d3 = sdf.parse(installtime);
-                             } catch (ParseException ex) {
-                             }
-		
-                    long diff = ((d2.getTime() - d1.getTime())/1000);
-		String status = "ONLINE";
-	
-                        if((diff)>35){
-              
-                   status = "OFFLINE";
-              
-                        }
-                
-               ac.addProperty("Status", status);
-               try{
-               ac.addProperty("Temp", list[4].substring(0, 2));
-               }catch(Exception e){
-                       e.printStackTrace();
-                       }
-               SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-               String updatetime = sdf2.format(d1);
-                installtime = sdf2.format(d3);
-              ac.addProperty("LastTime", updatetime);
-              ac.addProperty("InstallTime", installtime);
-                aclist.add(ac);
+              try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AddAC.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Gson gsonBuilder = new GsonBuilder().create();
-            String acliststr = gsonBuilder.toJson(aclist);
-           out.println(acliststr);
+            /* TODO output your page here. You may use following sample code. */
+           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+            Calendar now = Calendar.getInstance(); // in your case now will be the server time after getting from DB
+            now.add(Calendar.HOUR, +5);  
             
+            
+            
+            String dev_id = request.getParameter("i");
+            String brand = request.getParameter("b");
+            String userid = request.getParameter("g");
+            String label = request.getParameter("l");
+            String power = request.getParameter("p");
+//            String camera = request.getParameter("c");
+//            String motion = request.getParameter("m");
+            String group_id = "0";
+            String subgroup_id = "0";
+            String time = sdf.format(now.getTime());
+            String POWER = "ON";
+            String THERMO ="24";
+            String FAN_SPEED = "HIGH";
+            String MODE ="COOL";
+            String Swing = "AUTO";
+            String Inherited = "0";
+            String remote = "3";
+            String ip="0";
+            String temp = "0";
+            String humid = "0";
+            String lastupdate = sdf.format(now.getTime());
+            AirDB airdb = new AirDB(); 
+            
+            
+//            
+//       
+//            airdb.CreateUser(dev_id);
+//           airdb.GrantPriv(dev_id);
+            
+            airdb.deleteAC(dev_id);
+            airdb.deletePower(dev_id);
+            airdb.clearSchedule(dev_id);
+            airdb.NewDevice(dev_id, group_id, subgroup_id, label, brand, Inherited, THERMO, FAN_SPEED, POWER, Swing, MODE,remote,ip,time,userid,lastupdate,temp,humid);
+            airdb.AddPower(dev_id,power);
+          
+//            if(motion.trim().equals("1")){
+//            airdb.AddMotion(dev_id);
+//            }
+//            if(camera.trim().equals("1")){
+//                airdb.AddCam(dev_id);
+//            }
+
+ JsonObject ac = new JsonObject();
+             
+                 ac.addProperty("ID", dev_id);
+            Gson gsonBuilder = new GsonBuilder().create();
+            String acliststr = gsonBuilder.toJson(ac);
+           out.println(acliststr);
         } finally {            
             out.close();
         }

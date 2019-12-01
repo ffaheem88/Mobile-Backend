@@ -51,9 +51,9 @@ public class GetDashboard extends HttpServlet {
            ArrayList<String[]> total = conn.GetTotalAcList(userid);
            ArrayList<String[]> offline = conn.GetTotalOfflineAcList(userid);
            ArrayList<String[]> operational = conn.GetTotalOperationalAcList(userid);
-           String avgtemp = conn.getTotalAvgTemp(userid);
+          // String avgtemp = conn.getTotalAvgTemp(userid);
            
-           JsonObject items = new JsonObject();
+          // JsonObject items = new JsonObject();
            JsonArray aclistmain = new JsonArray();
            JsonObject totalac = new JsonObject();
            JsonObject offlineac = new JsonObject();
@@ -66,13 +66,8 @@ public class GetDashboard extends HttpServlet {
           
       		Date d1 = null;
                 Date d2 = null;
-                
-                
-                
-                 
-              //  items.addProperty("TEMP", avgtemp);
-               
-               JsonArray aclist = new JsonArray();
+            Date d3 = null;
+            JsonArray aclist = new JsonArray();
             for(int x = 0;x<total.size();x++){
                  JsonObject ac = new JsonObject();
                  String[] list = total.get(x);
@@ -82,10 +77,11 @@ public class GetDashboard extends HttpServlet {
                  
               
                 String lasttime = list[3];
-           
+                String installtime = list[5];
                  try {
                                  d1 = sdf.parse(lasttime);
                                  d2 = sdf.parse(time);
+                                 d3 = sdf.parse(installtime);
                              } catch (ParseException ex) {
                              }
 		
@@ -106,8 +102,9 @@ public class GetDashboard extends HttpServlet {
                        }
                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                String updatetime = sdf2.format(d1);
-               
+                installtime = sdf2.format(d3);
               ac.addProperty("LastTime", updatetime);
+              ac.addProperty("InstallTime", installtime);
                 aclist.add(ac);
             }
             totalac.addProperty("name", "Powered Off");
@@ -116,7 +113,7 @@ public class GetDashboard extends HttpServlet {
             
             
             JsonArray acofflinelist = new JsonArray();
-            for(int x = 0;x<offline.size();x++){
+           for(int x = 0;x<offline.size();x++){
                  JsonObject ac = new JsonObject();
                  String[] list = offline.get(x);
                  ac.addProperty("ID", list[0]);
@@ -125,10 +122,11 @@ public class GetDashboard extends HttpServlet {
                  
               
                 String lasttime = list[3];
-           
+                String installtime = list[5];
                  try {
                                  d1 = sdf.parse(lasttime);
                                  d2 = sdf.parse(time);
+                                 d3 = sdf.parse(installtime);
                              } catch (ParseException ex) {
                              }
 		
@@ -149,8 +147,9 @@ public class GetDashboard extends HttpServlet {
                        }
                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                String updatetime = sdf2.format(d1);
-               
+                installtime = sdf2.format(d3);
               ac.addProperty("LastTime", updatetime);
+              ac.addProperty("InstallTime", installtime);
                 acofflinelist.add(ac);
             }
             offlineac.addProperty("name", "Troubleshoot");
@@ -158,7 +157,7 @@ public class GetDashboard extends HttpServlet {
             offlineac.add("children", acofflinelist);
             
              JsonArray acoperationallist = new JsonArray();
-            for(int x = 0;x<operational.size();x++){
+          for(int x = 0;x<operational.size();x++){
                  JsonObject ac = new JsonObject();
                  String[] list = operational.get(x);
                  ac.addProperty("ID", list[0]);
@@ -167,10 +166,11 @@ public class GetDashboard extends HttpServlet {
                  
               
                 String lasttime = list[3];
-           
+                String installtime = list[5];
                  try {
                                  d1 = sdf.parse(lasttime);
                                  d2 = sdf.parse(time);
+                                 d3 = sdf.parse(installtime);
                              } catch (ParseException ex) {
                              }
 		
@@ -191,8 +191,9 @@ public class GetDashboard extends HttpServlet {
                        }
                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                String updatetime = sdf2.format(d1);
-               
+                installtime = sdf2.format(d3);
               ac.addProperty("LastTime", updatetime);
+              ac.addProperty("InstallTime", installtime);
                 acoperationallist.add(ac);
             }
             operationalac.addProperty("name", "Powered On");

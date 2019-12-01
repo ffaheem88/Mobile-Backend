@@ -50,14 +50,14 @@ public class GetIdList extends HttpServlet {
             
             AirDBMobile conn = new AirDBMobile();
            ArrayList<String[]> idlist = conn.GetidList(userId);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
            Calendar now = Calendar.getInstance(); // in your case now will be the server time after getting from DB
            now.add(Calendar.HOUR, +5);  
            String time = sdf.format(now.getTime());
           
       		Date d1 = null;
                 Date d2 = null;
-            
+            Date d3 = null;
             JsonArray aclist = new JsonArray();
             for(int x = 0;x<idlist.size();x++){
                  JsonObject ac = new JsonObject();
@@ -68,10 +68,11 @@ public class GetIdList extends HttpServlet {
                  
               
                 String lasttime = list[3];
-           
+                String installtime = list[5];
                  try {
                                  d1 = sdf.parse(lasttime);
                                  d2 = sdf.parse(time);
+                                 d3 = sdf.parse(installtime);
                              } catch (ParseException ex) {
                              }
 		
@@ -90,7 +91,11 @@ public class GetIdList extends HttpServlet {
                }catch(Exception e){
                        e.printStackTrace();
                        }
-              
+               SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+               String updatetime = sdf2.format(d1);
+                installtime = sdf2.format(d3);
+              ac.addProperty("LastTime", updatetime);
+              ac.addProperty("InstallTime", installtime);
                 aclist.add(ac);
             }
             Gson gsonBuilder = new GsonBuilder().create();

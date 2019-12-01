@@ -18,7 +18,7 @@ public class AirDBMobile {
 //    static String user="ffaheem_mobile";
 //    static String pass="mobile@123";
     
-    static String dbadress = "jdbc:mysql://pkujala2-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
+    static String dbadress = "jdbc:mysql://pkujala01-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
     static String user="ffaheem";
     static String pass="fai12345";
     
@@ -203,12 +203,13 @@ public class AirDBMobile {
                         ResultSet resultSet = statement  
                     .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID='"+userid+"' AND SUBGROUP_ID=0");  
             while (resultSet.next()) { 
-                String[] list = new String[5];
+                String[] list = new String[6];
                 list[0] = resultSet.getString("ID");
                 list[1] = resultSet.getString("LABEL");
                 list[2] = resultSet.getString("POWER");
                 list[3] = resultSet.getString("LAST_UPDATE");
                 list[4] = resultSet.getString("TEMP");
+                list[5] = resultSet.getString("INSTALL_DATE");
                 al.add(list);
                 
             }  
@@ -241,12 +242,14 @@ public class AirDBMobile {
                         ResultSet resultSet = statement  
                     .executeQuery("SELECT * FROM AC_MAIN WHERE SUBGROUP_ID='"+userid+"'");  
             while (resultSet.next()) { 
-                String[] list = new String[5];
+                
+                String[] list = new String[6];
                 list[0] = resultSet.getString("ID");
                 list[1] = resultSet.getString("LABEL");
                 list[2] = resultSet.getString("POWER");
                 list[3] = resultSet.getString("LAST_UPDATE");
                 list[4] = resultSet.getString("TEMP");
+                list[5] = resultSet.getString("INSTALL_DATE");
                 al.add(list);
                 
             }  
@@ -276,14 +279,15 @@ public class AirDBMobile {
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID='"+userid+"' AND POWER='OFF'");  
+                    .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID='"+userid+"' AND POWER='OFF' AND str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute)");  
             while (resultSet.next()) { 
-                String[] list = new String[5];
+                String[] list = new String[6];
                 list[0] = resultSet.getString("ID");
                 list[1] = resultSet.getString("LABEL");
                 list[2] = resultSet.getString("POWER");
                 list[3] = resultSet.getString("LAST_UPDATE");
                 list[4] = resultSet.getString("TEMP");
+                list[5] = resultSet.getString("INSTALL_DATE");
                 al.add(list);
                 
             }  
@@ -313,14 +317,15 @@ public class AirDBMobile {
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT * FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')< date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid);  
+                    .executeQuery("SELECT * FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')< date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID='"+userid+"'");  
             while (resultSet.next()) { 
-                String[] list = new String[5];
+                String[] list = new String[6];
                 list[0] = resultSet.getString("ID");
                 list[1] = resultSet.getString("LABEL");
                 list[2] = resultSet.getString("POWER");
                 list[3] = resultSet.getString("LAST_UPDATE");
                 list[4] = resultSet.getString("TEMP");
+                list[5] = resultSet.getString("INSTALL_DATE");
                 al.add(list);
                 
             }  
@@ -351,14 +356,15 @@ public class AirDBMobile {
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID="+userid+" AND POWER='ON'");  
+                    .executeQuery("SELECT * FROM AC_MAIN WHERE PROFILE_ID='"+userid+"' AND POWER='ON' AND str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute)");  
             while (resultSet.next()) { 
-                String[] list = new String[5];
+                String[] list = new String[6];
                 list[0] = resultSet.getString("ID");
                 list[1] = resultSet.getString("LABEL");
                 list[2] = resultSet.getString("POWER");
                 list[3] = resultSet.getString("LAST_UPDATE");
                 list[4] = resultSet.getString("TEMP");
+                list[5] = resultSet.getString("INSTALL_DATE");
                 al.add(list);
                 
             }  
@@ -462,7 +468,7 @@ public class AirDBMobile {
             Statement statement = connection.createStatement();  
            
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')< date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid);  
+                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')< date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID='"+userid+"'");  
             while (resultSet.next()) {
                 data = (resultSet.getString("COUNT(*)"));
             }  
@@ -491,7 +497,7 @@ public class AirDBMobile {
             Statement statement = connection.createStatement();  
            
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid+" AND POWER='ON'");  
+                    .executeQuery("SELECT COUNT(*) FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID='"+userid+"' AND POWER='ON'");  
             while (resultSet.next()) {
                 data = (resultSet.getString("COUNT(*)"));
             }  
@@ -520,7 +526,7 @@ public class AirDBMobile {
             Statement statement = connection.createStatement();  
            
                         ResultSet resultSet = statement  
-                    .executeQuery("SELECT ROUND(AVG(TEMP)) AS AVGTEMP FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID="+userid);  
+                    .executeQuery("SELECT ROUND(AVG(TEMP)) AS AVGTEMP FROM AC_MAIN WHERE str_to_date(LAST_UPDATE, '%Y-%m-%d_%H:%i:%s')> date_add(NOW(), INTERVAL '4:58' hour_minute) AND PROFILE_ID='"+userid+"'");  
             while (resultSet.next()) {
                 data = (resultSet.getString("AVGTEMP"));
             }  
@@ -2795,5 +2801,24 @@ public String getRemoteState(String AC_ID){
         return vals;
        
 }
+   
+   public void UpdateBrand(String AC_ID, String Brand) {
+
+        Connection connection = null;
+        try {
+
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("UPDATE AC_MAIN SET BRAND='" + Brand + "' WHERE ID='" + AC_ID + "'");
+            statement.close();
+            connection.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
  
 }

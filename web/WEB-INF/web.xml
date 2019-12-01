@@ -69,6 +69,10 @@
         <servlet-class>PKClass.AddSchedule</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AddAC</servlet-name>
+        <servlet-class>PKClass.AddAC</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>GetSchedule</servlet-name>
         <servlet-class>PKClass.GetSchedule</servlet-class>
     </servlet>
@@ -176,9 +180,17 @@
         <servlet-name>SetSubGroupACPower</servlet-name>
         <servlet-class>PKClass.SetSubGroupACPower</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateBrand</servlet-name>
+        <servlet-class>PKClass.UpdateBrand</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GetMoves</servlet-name>
         <url-pattern>/GetMoves</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddAC</servlet-name>
+        <url-pattern>/AddAC</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetPowerState</servlet-name>
@@ -351,6 +363,10 @@
     <servlet-mapping>
         <servlet-name>SetSubGroupACPower</servlet-name>
         <url-pattern>/SetSubGroupACPower</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateBrand</servlet-name>
+        <url-pattern>/UpdateBrand</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -28,7 +28,7 @@ import java.util.Date;
 
 
 public class NewClass {
-    static String dbadress = "jdbc:mysql://pkujala2-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
+    static String dbadress = "jdbc:mysql://pkujala01-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
     static String user="ffaheem";
     static String pass="fai12345";
     public static void main(String args[]){

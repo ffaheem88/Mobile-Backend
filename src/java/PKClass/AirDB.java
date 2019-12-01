@@ -20,7 +20,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
  * @author Faisal
  */
 public class AirDB {
-    static String dbadress = "jdbc:mysql://pkujala2-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
+    static String dbadress = "jdbc:mysql://pkujala01-cluster.cluster-c66yg152cqdw.us-west-2.rds.amazonaws.com:3306/ffaheem_wiir";
     //static String dbadress = "jdbc:mysql://127.0.0.1:3306/ffaheem_wiir";
      private String user;
      private String pass;
@@ -42,10 +42,13 @@ public class AirDB {
      
      
      
-      public String getCurrent(String AC_LABEL){
+     
+     
+     
+     
+      public void deleteAC(String TrackerID){
     
-    String data="";
-    
+   
     Connection connection = null;  
         try{
         
@@ -53,23 +56,112 @@ public class AirDB {
             
             connection = DriverManager.getConnection(dbadress, user, pass);
             Statement statement = connection.createStatement();  
-           
-                        ResultSet resultSet = statement  
-                    .executeQuery("SELECT PIC FROM PIC WHERE AC_ID='"+AC_LABEL+"' ORDER BY ID DESC LIMIT 1");  
-            while (resultSet.next()) {
-                data = (resultSet.getString("PIC"));
-            }  
+            statement.executeUpdate("DELETE FROM AC_MAIN where ID='"+TrackerID+"'");  
+            
             
             statement.close();
             connection.close();
             
             
         } catch (Exception e) {  
-            data=e.toString();  
+            e.printStackTrace();  
 }
-        return data;
+      }
+      
+      
+      public void deletePower(String TrackerID){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("DELETE FROM AC_RATING where AC_ID='"+TrackerID+"'");  
+            
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
 }
       
+    
+}
+ 
+ public void clearSchedule(String TrackerID){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("DELETE FROM SCHEDULE_DET where AC_ID='"+TrackerID+"'");  
+            
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+}
+      
+    
+}
+ 
+  public void NewDevice(String AC_ID,String Group_Id,String SubGroup_Id,String Label,String Brand,String Inherited, String Thermostat, String Speed, String Power,String Swing,String Mode,String remote,String ip, String time,String profile,String lastupdate,String temp,String humid){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("INSERT INTO `AC_MAIN` (`ID`, `IR_CODE`, `SUBGROUP_ID`, `LABEL`, `BRAND`, `INHERITED`, `THERMOSTAT`, `POWER`, `FAN_SPEED`, `MODE`, `SWING`,`REMOTE`,`IP`,`INSTALL_DATE`,`PROFILE_ID`,`WIFI`,`LAST_UPDATE`,`TEMP`,`HUMID`,`SIGNAL` ) VALUES ('"+AC_ID+"', '"+Group_Id+"', '"+SubGroup_Id+"', '"+Label+"', '"+Brand+"', '"+Inherited+"', '"+Thermostat+"', '"+Power+"', '"+Speed+"', '"+Mode+"', '"+Swing+"','"+remote+"' ,'"+ip+"', '"+time+"','"+profile+"','WIFI','"+lastupdate+"','"+temp+"','"+humid+"','-80');");  
+            
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+    }
+
+ }
+  
+  public void AddPower(String AC_ID,String power){
+    
+   
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+            statement.executeUpdate("INSERT INTO `AC_RATING` (`AC_ID`, `RATING`) VALUES ('"+AC_ID+"', '"+power+"');");  
+            
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            e.printStackTrace();  
+    }
+
+ }    
       
        public String[] getCurrent(String AC_ID) {
 
