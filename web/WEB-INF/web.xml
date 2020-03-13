@@ -184,6 +184,14 @@
         <servlet-name>UpdateBrand</servlet-name>
         <servlet-class>PKClass.UpdateBrand</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdatePowerLabel</servlet-name>
+        <servlet-class>PKClass.UpdatePowerLabel</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AuthorizeAlexa</servlet-name>
+        <servlet-class>PKClass.AuthorizeAlexa</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GetMoves</servlet-name>
         <url-pattern>/GetMoves</url-pattern>
@@ -367,6 +375,14 @@
     <servlet-mapping>
         <servlet-name>UpdateBrand</servlet-name>
         <url-pattern>/UpdateBrand</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdatePowerLabel</servlet-name>
+        <url-pattern>/UpdatePowerLabel</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AuthorizeAlexa</servlet-name>
+        <url-pattern>/AuthorizeAlexa</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -1,114 +1,99 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package PKClass;
-
-
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
 /**
  *
- * @author Faisal
+ * @author Super
  */
-public class AddAC extends HttpServlet {
+public class UpdatePowerLabel extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP
-     * <code>GET</code> and
-     * <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
          response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
         response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
         response.addHeader("Access-Control-Max-Age", "1728000");
         PrintWriter out = response.getWriter();
         try {
-             
             /* TODO output your page here. You may use following sample code. */
-           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-            Calendar now = Calendar.getInstance(); // in your case now will be the server time after getting from DB
-            now.add(Calendar.HOUR, +5);  
+             AirDB airdb = new AirDB();
             
             
-            
-            String dev_id = request.getParameter("i");
-            String brand = request.getParameter("b");
-            String userid = request.getParameter("g");
-            String label = request.getParameter("l");
-            String power = request.getParameter("p");
-//            String camera = request.getParameter("c");
-//            String motion = request.getParameter("m");
-            String group_id = "0";
-            String subgroup_id = "0";
-            String time = sdf.format(now.getTime());
-            String POWER = "ON";
-            String THERMO ="24";
-            String FAN_SPEED = "HIGH";
-            String MODE ="COOL";
-            String Swing = "AUTO";
-            String Inherited = "0";
-            String remote = "3";
-            String ip="0";
-            String temp = "0";
-            String humid = "0";
-            String lastupdate = sdf.format(now.getTime());
-            AirDB airdb = new AirDB(); 
-            
-            
+            String AC_LABEL = request.getParameter("LABEL");
+//            String node_id = airdb.getNodeType(AC_LABEL);
+            String thermoval = request.getParameter("POWER");
+//            if (node_id.startsWith("A")) {
 
-            
-            airdb.deleteAC(dev_id);
-            airdb.deletePower(dev_id);
-            airdb.clearSchedule(dev_id);
-            airdb.NewDevice(dev_id, group_id, subgroup_id, label, brand, Inherited, THERMO, FAN_SPEED, POWER, Swing, MODE,remote,ip,time,userid,lastupdate,temp,humid);
-            airdb.AddPower(dev_id,power);
-          
-         //   this.onDeviceAdded();
+AC_LABEL = airdb.getIDFromLabel(AC_LABEL);
 
- JsonObject ac = new JsonObject();
-             
-                 ac.addProperty("ID", dev_id);
-            Gson gsonBuilder = new GsonBuilder().create();
-            String acliststr = gsonBuilder.toJson(ac);
+String prevval = airdb.getPowerStateAC(AC_LABEL);
+
+                airdb.UpdatePowerAC(AC_LABEL, thermoval);
+                
+                 String vals[];
+             try {
+                  String raw="";
+             vals = airdb.getState(AC_LABEL);
+            String Speed = vals[0];
+            String Thermo = vals[1];
+            String operation = vals[2];
+            String mode = vals[3];
+            String swing = vals[4];
+            String brand = vals[5];
+            if(brand.equals("13") && operation.equals("ON") && prevval.equals("OFF")){
+                  raw =  airdb.getCodePower14(Thermo, Speed, operation, brand, mode, swing);  
+             }else{
+                  raw =  airdb.getCode(Thermo, Speed, operation, brand, mode, swing);     
+            }
+            airdb.UpdateIrCode(AC_LABEL, raw);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+                
+                JsonObject ac = new JsonObject();
+                 ac.addProperty("ID", AC_LABEL);
+               Gson gsonBuilder = new GsonBuilder().create();
+           String acliststr = gsonBuilder.toJson(ac);
+           
            out.println(acliststr);
+            
+           
+            
+                
+
         } finally {            
             out.close();
         }
     }
 
-    
-   
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP
-     * <code>GET</code> method.
+     * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -122,8 +107,7 @@ public class AddAC extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP
-     * <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -145,4 +129,5 @@ public class AddAC extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

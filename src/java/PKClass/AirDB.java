@@ -7283,6 +7283,32 @@ public String GetGraphACDates(String ID,String begintime,String endtime){
         return vals;
        
 }
-   
+   public String getIDFromLabel(String Label){
+  
+    String data="";
+    
+    Connection connection = null;  
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver").newInstance();  
+            
+            connection = DriverManager.getConnection(dbadress, user, pass);
+            Statement statement = connection.createStatement();  
+           
+                        ResultSet resultSet = statement  
+                    .executeQuery("SELECT ID FROM AC_MAIN WHERE LABEL LIKE '%"+Label+"%'");  
+            while (resultSet.next()) {
+                data = (resultSet.getString("ID"));
+            }  
+            
+            statement.close();
+            connection.close();
+            
+            
+        } catch (Exception e) {  
+            data=e.toString();  
+}
+        return data;
+}
 
 }

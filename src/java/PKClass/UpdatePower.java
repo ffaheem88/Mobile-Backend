@@ -4,6 +4,7 @@
  */
 package PKClass;
 
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -12,11 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
+
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
 import java.sql.SQLException;
-import java.util.ArrayList;
+
 /**
  *
  * @author Faisal
@@ -33,6 +34,7 @@ public class UpdatePower extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -44,7 +46,7 @@ public class UpdatePower extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
              AirDB airdb = new AirDB();
-            
+             
             
             String AC_LABEL = request.getParameter("AC_ID");
 //            String node_id = airdb.getNodeType(AC_LABEL);
@@ -66,6 +68,13 @@ String prevval = airdb.getPowerStateAC(AC_LABEL);
             String mode = vals[3];
             String swing = vals[4];
             String brand = vals[5];
+            
+            if(operation.equals("ON")){
+                //this.onDeviceStateUpdated(true);
+            }else{
+                //this.onDeviceStateUpdated(false);
+            }
+            
             if(brand.equals("13") && operation.equals("ON") && prevval.equals("OFF")){
                   raw =  airdb.getCodePower14(Thermo, Speed, operation, brand, mode, swing);  
              }else{
@@ -91,6 +100,11 @@ String prevval = airdb.getPowerStateAC(AC_LABEL);
             out.close();
         }
     }
+    
+   
+    
+  
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

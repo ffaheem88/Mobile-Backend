@@ -65,8 +65,6 @@ public class GetIdList extends HttpServlet {
                  ac.addProperty("ID", list[0]);
                  ac.addProperty("Label", list[1]);
                  ac.addProperty("Power", list[2]);
-                 
-              
                 String lasttime = list[3];
                 String installtime = list[5];
                  try {
